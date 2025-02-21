@@ -1,16 +1,16 @@
 import express from 'express';
-import path from 'path';
-import { routes } from '.';
+import { serverRoutes } from './routes/serverRoutes'; // Ajuste o caminho conforme necessário
+import { routes } from './routes/index';
 
 const app = express();
 
-
-// Configurações e middlewares
 app.use(express.json());
 
-// Suas rotas
-app.use(routes);
+// Use o roteador dentro do servidor principal
+app.use(routes);  // Ou qualquer outro caminho base que você deseje
 
-app.listen(3000, () => {
-    console.log("Servidor rodando na porta 3000");
+
+app.listen(3333, () => {
+  console.log('Servidor rodando na porta 3000');
 });
+

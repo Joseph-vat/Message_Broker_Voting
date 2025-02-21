@@ -18,3 +18,5 @@ const worker = new Worker("voting-queue", async (job) => {
 }, { connection: { host: "localhost", port: 6379 } });
 
 console.log("🚀 Worker rodando e aguardando votos...");
+
+
