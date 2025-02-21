@@ -1,7 +1,3 @@
-Aqui está um exemplo de **README.md** para o seu projeto de sistema de votação usando **Express**, **Redis**, **BullMQ**, e **PostgreSQL**. Este README é claro, informativo e cobre todos os aspectos importantes do projeto.
-
----
-
 # Sistema de Votação
 
 Este projeto é um sistema de votação que permite aos usuários enviar votos via API, processá-los em uma fila usando Redis e BullMQ, e armazenar os resultados em um banco de dados PostgreSQL.
@@ -62,11 +58,11 @@ O sistema funciona em 6 etapas principais:
      REDIS_PORT=6379
 
      # PostgreSQL
-     POSTGRES_HOST=localhost
-     POSTGRES_PORT=5432
-     POSTGRES_USER=seu_usuario
-     POSTGRES_PASSWORD=sua_senha
-     POSTGRES_DB=votacao
+    POSTGRES_USER=seu_usuario
+    POSTGRES_PASSWORD=sua_senha
+    POSTGRES_HOST=localhost
+    POSTGRES_PORT=5432
+    POSTGRES_DB=votacao
 
      # Servidor
      PORT=3000
@@ -76,9 +72,7 @@ O sistema funciona em 6 etapas principais:
    - Certifique-se de que o PostgreSQL está rodando.
    - Execute as migrações para criar a tabela de votos:
      ```bash
-     yarn migrate
-     # ou
-     npm run migrate
+     npx prisma migrate dev
      ```
 
 5. **Inicie o servidor:**
@@ -104,7 +98,12 @@ O sistema funciona em 6 etapas principais:
 - **Descrição:** Envia um voto para ser processado.
 - **Exemplo de requisição:**
   ```bash
-  curl -X POST http://localhost:3000/votar -H "Content-Type: application/json" -d '{"candidato": "Candidato A"}'
+  http://localhost:3000/votar 
+  ```
+    ```json
+  {
+        "candidato": "Candidato X"
+  }
   ```
 - **Resposta:**
   ```json
@@ -117,7 +116,7 @@ O sistema funciona em 6 etapas principais:
 - **Descrição:** Retorna a contagem de votos.
 - **Exemplo de requisição:**
   ```bash
-  curl -X GET http://localhost:3000/resultados
+  http://localhost:3000/resultados 
   ```
 - **Resposta:**
   ```json
@@ -132,18 +131,20 @@ O sistema funciona em 6 etapas principais:
 ## Estrutura do Projeto
 
 ```
-sistema-votacao/
+MESSAGE_BROKER_VOTING/
+├── node_modules/
+├── prisma/
+│   ├── migrations/        # Migrações do banco de dados
+│   ├── schema.prisma      
 ├── src/
 │   ├── api/               # Rotas e controllers
-│   ├── worker/            # Worker para processar a fila
-│   ├── db/                # Configuração do banco de dados
 │   ├── queues/            # Configuração da fila (BullMQ)
-│   ├── utils/             # Utilitários (logs, validações, etc.)
-│   ├── app.ts             # Configuração do Express
+│   ├── worker/            # Worker para processar a fila
 │   └── server.ts          # Inicialização do servidor
-├── migrations/            # Migrações do banco de dados
 ├── .env                   # Variáveis de ambiente
+├── .gitignore             # Controlador para exclusão de arquivos
 ├── tsconfig.json          # Configuração do TypeScript
+├── package-lock.json     
 ├── package.json           # Dependências e scripts
 └── README.md              # Documentação do projeto
 ```
@@ -191,19 +192,3 @@ sistema-votacao/
 5. Abra um Pull Request.
 
 ---
-
-## Licença
-
-Este projeto está licenciado sob a MIT License. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
-
----
-
-## Contato
-
-- **Autor:** [Seu Nome]
-- **Email:** [seu-email@exemplo.com]
-- **GitHub:** [https://github.com/seu-usuario](https://github.com/seu-usuario)
-
----
-
-Esse README cobre tudo o que é necessário para entender, configurar e executar o projeto. Se precisar de mais alguma coisa, é só avisar! 😊

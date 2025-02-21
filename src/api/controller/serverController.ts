@@ -1,25 +1,17 @@
 import { Request, Response } from 'express';
-import { Queue } from "bullmq";
 import { PrismaClient } from "@prisma/client";
-
+import { queue } from '../../queue/queue';
 
 const prisma = new PrismaClient();
 
-const connection = { host: "localhost", port: 6379 };
-
-// Configuração do BullMQ (Gerenciamento de Filas)
-const queue = new Queue("voting-queue", { connection: { host: "localhost", port: 6379 } });
-
-console.log("Fila criada!");
-
 // Endpoint para registrar um voto
-export async function votarCandidato (req: Request, res: Response) {
+export async function votarCandidato(req: Request, res: Response) {
     try {
 
         const { candidato } = req.body;
 
         console.log("candidato");
-        
+
 
         if (!candidato) {
             res.status(400).json({ error: "Candidato é obrigatório." });
