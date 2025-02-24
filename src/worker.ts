@@ -1,21 +1,23 @@
 import { Worker } from "bullmq";
-import { PrismaClient } from "@prisma/client";
+import { prismaClient } from "../src/database/prismaClient";
 
-const prisma = new PrismaClient();
-
-// Criar um worker que processa mensagens da fila de votação
 const worker = new Worker("voting-queue", async (job) => {
     const { candidato } = job.data;
 
-    console.log(`🗳️ Processando voto para: ${candidato}`);
-
-    // Inserir no banco de dados
-    await prisma.voto.create({
-        data: { candidato },
-    });
-
-    console.log("✅ Voto registrado com sucesso!");
-}, { connection: { host: "localhost", port: 6379 } });
+    try {
+        const voto = await prismaClient.voto.create({
+            data: { candidato },
+        });
+        console.log("✅ Voto registrado com sucesso:", voto);
+        return voto;
+    }
+    catch (error) {
+        console.error("❌ Erro ao registrar voto:", error);
+    }
+    finally {
+        await prismaClient.$disconnect(); 
+    }
+}, { connection: { host: process.env.REDIS_HOST, port: Number(process.env.REDIS_PORT) } });
 
 console.log("🚀 Worker rodando e aguardando votos...");
 

@@ -1,6 +1,13 @@
 import { Queue } from "bullmq";
 
-// Configuração do BullMQ (Gerenciamento de Filas)
-export const queue = new Queue("voting-queue", { connection: { host: process.env.REDIS_HOST, port: Number(process.env.REDIS_PORT) } });
+export const queue = new Queue("voting-queue", { 
+  connection: { 
+    host: process.env.REDIS_HOST, 
+    port: Number(process.env.REDIS_PORT) 
+  } 
+});
 
-console.log("Fila criada!");
+// Captura erros gerais da conexão com o Redis ou da própria fila
+queue.on("error", (error) => {
+  console.error("❌ Erro na fila:", error);
+});
