@@ -6,23 +6,19 @@ const app = express();
 app.use(express.json());
 
 app.use(routes); 
+''
 
-const PORT = 3000;
-
-const server = app.listen(PORT, () => {
-  console.log(`🚀 Servidor rodando em http://localhost:${PORT}`);
+const server = app.listen(Number(process.env.PORT), () => {
+  console.log(`🚀 Servidor rodando em http://localhost:${Number(process.env.PORT)}`);
 });
 
 server.on("error", (error: NodeJS.ErrnoException) => {
   if (error.code === "EADDRINUSE") {
-    console.error(`❌ Erro: A porta ${PORT} já está em uso.`);
+    console.error(`❌ Erro: A porta ${Number(process.env.PORT)} já está em uso.`);
   } else {
     console.error("❌ Erro ao iniciar o servidor:", error);
   }
 });
-
-console.error("Aguardando votos");
-
 
 
 export default app;

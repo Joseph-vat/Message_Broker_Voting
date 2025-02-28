@@ -9,7 +9,8 @@ Este projeto é um sistema de votação que permite aos usuários enviar votos v
 - **Backend:** Node.js + Express
 - **Fila de Mensagens:** BullMQ + Redis
 - **Banco de Dados:** PostgreSQL
-- **Ferramentas de Desenvolvimento:** TypeScript, RedisInsight, pgAdmin
+- **Tecnologia de Desenvolvimento:** TypeScript
+- **Ferramentas de Desenvolvimento:** RedisInsight, pgAdmin
 
 ---
 
@@ -30,61 +31,76 @@ O sistema funciona em 6 etapas principais:
 
 ### Pré-requisitos
 
+Antes de rodar o projeto, certifique-se de ter instalado os seguintes requisitos:
 - Node.js (v18 ou superior)
-- Redis (instalado e rodando)
-- PostgreSQL (instalado e rodando)
-- Yarn ou NPM (gerenciador de pacotes)
+- NPM (gerenciador de pacotes)
+
+Caso algum desses itens não esteja instalado, siga o passo abaixo.
+
+### Instalando os Pré-requisitos
+
+#### 📌 Node.js + NPM
+1. Acesse [Node.js](https://nodejs.org) e baixe a versão LTS.
+2. Após a instalação, verifique se o Node.js e o NPM estão instalados:
+   ```sh
+    node -v
+    npm -v
+    ```
 
 ### Passos para Configuração
 
 1. **Clone o repositório:**
    ```bash
-   git clone https://github.com/seu-usuario/sistema-votacao.git
-   cd sistema-votacao
+   git clone https://github.com/seu-usuario/Message_Broker_Voting.git
+   cd Message_Broker_Voting
    ```
 
 2. **Instale as dependências:**
    ```bash
-   yarn install
-   # ou
    npm install
    ```
 
 3. **Configure o ambiente:**
    - Crie um arquivo `.env` na raiz do projeto com as seguintes variáveis:
-     ```env
+    ```env
      # Redis
      REDIS_HOST=localhost
      REDIS_PORT=6379
 
      # PostgreSQL
-    POSTGRES_USER=seu_usuario
-    POSTGRES_PASSWORD=sua_senha
-    POSTGRES_HOST=localhost
-    POSTGRES_PORT=5432
-    POSTGRES_DB=votacao
+     POSTGRES_USER=seu_usuario
+     POSTGRES_PASSWORD=sua_senha
+     POSTGRES_HOST=localhost
+     POSTGRES_PORT=5432
+     POSTGRES_DB=votacao
 
      # Servidor
      PORT=3000
      ```
 
-4. **Execute as migrações do banco de dados:**
+4. **Instale as imagens Docker com o Docker-compose:**
+   - Execute o comando abaixo para baixar as imagens:
+    ```bash
+      docker-compose up -d --build
+      ```
+
+5. **Execute as migrações do banco de dados:**
    - Certifique-se de que o PostgreSQL está rodando.
    - Execute as migrações para criar a tabela de votos:
-     ```bash
+    ```bash
      npx prisma migrate dev
      ```
 
-5. **Inicie o servidor:**
+6. **Inicie o servidor:**
    ```bash
    yarn start
    # ou
    npm start
    ```
 
-6. **Inicie o Worker:**
+7. **Inicie o Worker:**
    - Em um terminal separado, inicie o Worker para processar a fila:
-     ```bash
+    ```bash
      yarn worker
      # ou
      npm run worker
@@ -108,7 +124,7 @@ O sistema funciona em 6 etapas principais:
 - **Resposta:**
   ```json
   {
-    "message": "Voto recebido com sucesso"
+    "message": "Voto para o candidato candidato X enviado para a fila para ser processado!"
   }
   ```
 
@@ -120,46 +136,57 @@ O sistema funciona em 6 etapas principais:
   ```
 - **Resposta:**
   ```json
-  {
-    "Candidato A": 5,
-    "Candidato B": 3
-  }
+  [
+	{
+		"_count": {
+			"candidato": 1
+		},
+		"candidato": "Candidato A"
+	},
+	{
+		"_count": {
+			"candidato": 23
+		},
+		"candidato": "Candidato B"
+	},
+  ]
   ```
 
 ---
 
 ## Estrutura do Projeto
 
-```
-MESSAGE_BROKER_VOTING/
-├── node_modules/
-├── prisma/
-│   ├── migrations/        # Migrações do banco de dados
-│   ├── schema.prisma      
-├── src/
-│   ├── api/               # Rotas e controllers
-│   ├── queues/            # Configuração da fila (BullMQ)
-│   ├── worker/            # Worker para processar a fila
-│   └── server.ts          # Inicialização do servidor
-├── .env                   # Variáveis de ambiente
-├── .gitignore             # Controlador para exclusão de arquivos
-├── tsconfig.json          # Configuração do TypeScript
-├── package-lock.json     
-├── package.json           # Dependências e scripts
-└── README.md              # Documentação do projeto
-```
+  ```
+  MESSAGE_BROKER_VOTING/
+  ├── node_modules/                  # Dependências do projeto (gerado automaticamente)
+  ├── prisma/                        # Configurações do Prisma
+  │   ├── migrations/                # Migrações do banco de dados
+  │   │   └── ...                    # Arquivos de migração
+  │   └── schema.prisma              # Schema do Prisma
+  ├── src/                           # Código-fonte do projeto
+  │   ├── queue/                     # Configuração da fila (BullMQ)
+  │   │   └── queue.ts               # Configuração da fila
+  │   ├── server/                    # Configurações do servidor
+  │   │   ├── api/                   # Rotas e controllers
+  │   │   │   └── ...                # Arquivos de rotas/controllers
+  │   │   ├── database/              # Configurações do PrismaClient
+  │   │   │   └── prismaClient.ts    # Instância do PrismaClient
+  │   │   └── server.ts              # Inicialização do servidor
+  │   ├── worker/                    # Worker para processar a fila
+  │   │   └── worker.ts              # Configuração do worker
+  ├── .env                           # Variáveis de ambiente
+  ├── docker-compose.yml             # Configuração do Docker Compose
+  ├── Dockerfile                     # Configuração do Docker
+  ├── .gitignore                     # Arquivos e diretórios ignorados pelo Git
+  ├── tsconfig.json                  # Configuração do TypeScript
+  ├── package-lock.json              # Versões exatas das dependências (gerado automaticamente)
+  ├── package.json                   # Dependências e scripts do projeto
+  └── README.md                      # Documentação do projeto
+  ```
 
 ---
 
 ## Como Testar
-
-### Testes Automatizados
-- Execute os testes automatizados com o seguinte comando:
-  ```bash
-  yarn test
-  # ou
-  npm test
-  ```
 
 ### Testes Manuais
 1. Envie votos usando o endpoint POST `/votar`.
@@ -192,3 +219,14 @@ MESSAGE_BROKER_VOTING/
 5. Abra um Pull Request.
 
 ---
+
+
+passos:
+
+clonar repostitorio
+docker-compose up -d --build
+criar banco de dados
+npx prisma migrate dev
+npm start
+npm run worker
+

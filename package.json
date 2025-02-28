@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "tsx ./src/server.ts",
-    "worker": "tsx ./src/worker.ts",
+    "start": "tsx ./src/server/server.ts",
+    "worker": "tsx ./src/worker/worker.ts",
     "test": "tsx ./src/test/test.ts"
   },
   "keywords": [],

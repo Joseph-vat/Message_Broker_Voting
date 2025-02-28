@@ -1,0 +1,40 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: votacao-db
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+
+  redis:
+    image: redis:7
+    container_name: votacao-redis
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "6379:6379"
+
+  app:
+    build: .
+    container_name: votacao-app
+    restart: always
+    depends_on:
+      - postgres
+      - redis
+    env_file:
+      - .env
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/usr/src/app
+    command: ["sh", "-c", "npx prisma migrate deploy && npm run dev"]
+
+volumes:
+  postgres_data:

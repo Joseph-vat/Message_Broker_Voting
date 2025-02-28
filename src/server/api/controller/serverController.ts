@@ -1,11 +1,13 @@
 import { Request, Response } from 'express';
 import { prismaClient } from '../../database/prismaClient'
-import { queue } from '../../queue/queue';
+import { queue } from '../../../queue/queue';
 
 
 // Endpoint para registrar um voto
 export async function votarCandidato(req: Request, res: Response) {
     try {
+        console.log("Aqui");
+        
         const { candidato } = req.body;
 
         if (!candidato) {
@@ -18,7 +20,7 @@ export async function votarCandidato(req: Request, res: Response) {
         console.log(`Voto para o candidato ${candidato} enviado para a fila para ser processado!`);
         
 
-        res.status(200).json({ message: "Voto registrado e enviado para processamento!" });
+        res.status(200).json({ message: `Voto para o candidato ${candidato} enviado para a fila para ser processado!` });
     }
     catch (error) {
         console.error("Erro ao registrar voto:", error);
